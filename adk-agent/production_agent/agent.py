@@ -39,6 +39,13 @@ mcp_tools = MCPToolset(connection_params=StreamableHTTPConnectionParams(url=mcp_
 #    tools=[mcp_tools],  # Gemma focuses on conversational capabilities
 # )
 
+def add_prompt_to_state(
+    tool_context: ToolContext, prompt: str
+) -> dict[str, str]:
+    """Saves the user's initial prompt to the state."""
+    tool_context.state["PROMPT"] = prompt
+    return {"status": "success"}
+
 comprehensive_researcher = Agent(
     name="comprehensive_researcher",
     model=model_name,
@@ -86,4 +93,15 @@ marketing_guide_workflow = SequentialAgent(
 )
 
 # Set as root agent
-root_agent = marketing_guide_workflow
+root_agent = Agent(
+    name="greeter",
+    model=model_name,
+    description="The main entry point for the Marketing department.",
+    instruction="""
+    - Let the user know you will help them learn about the Marketing.
+    - When the user responds, use the 'add_prompt_to_state' tool to save their response.
+    After using the tool, transfer control to the 'marketing_guide_workflow' agent.
+    """,
+    tools=[add_prompt_to_state],
+    sub_agents=[marketing_guide_workflow]
+)
