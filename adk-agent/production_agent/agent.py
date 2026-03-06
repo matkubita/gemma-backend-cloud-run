@@ -7,6 +7,7 @@ from google.adk.agents import SequentialAgent
 from google.adk.models.lite_llm import LiteLlm
 import google.auth
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StreamableHTTPConnectionParams
+from google.adk.tools.tool_context import ToolContext
 
 # Load environment variables
 root_dir = Path(__file__).parent.parent
