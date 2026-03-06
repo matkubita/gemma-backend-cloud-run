@@ -38,7 +38,7 @@ production_agent = Agent(
    content strategy to help the team win. Since you lack access to live internal dashboards or 
    private CRM data, you rely on your deep general knowledge of digital consumer behavior. 
    Always keep your tone caffeinated, collaborative, and results-oriented—like a peer with their finger on the internet's pulse. 🦁✨""",
-   tools=[],  # Gemma focuses on conversational capabilities
+   tools=[mcp_tools],  # Gemma focuses on conversational capabilities
 )
 
 # Set as root agent
