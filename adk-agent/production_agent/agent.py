@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 import google.auth
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StreamableHTTPConnectionParams
 
 # Load environment variables
 root_dir = Path(__file__).parent.parent
@@ -23,6 +24,9 @@ os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "europe-west1")
 # Configure model connection
 gemma_model_name = os.getenv("GEMMA_MODEL_NAME", "gemma3:270m")
 api_base = os.getenv("OLLAMA_API_BASE", "localhost:10010")  # Location of Ollama server
+
+mcp_server_url = os.getenv("MCP_SERVER_URL")
+mcp_tools = MCPToolset(connection_params=StreamableHTTPConnectionParams(url=mcp_server_url))
 
 # Production Gemma Agent - GPU-accelerated conversational assistant
 production_agent = Agent(
