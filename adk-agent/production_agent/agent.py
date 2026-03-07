@@ -102,11 +102,10 @@ marketing_guide_workflow = SequentialAgent(
 root_agent = Agent(
     name="greeter",
     model=model_name,
-    description="The main entry point for the Marketing department.",
     instruction="""
-    - Let the user know you will help them learn about the Marketing.
-    - When the user responds, use the 'add_prompt_to_state' tool to save their response.
-    After using the tool, transfer control to the 'marketing_guide_workflow' agent.
+    Greet the user. Once they ask a question:
+    1. Call 'add_prompt_to_state' with their question.
+    2. Immediately call 'transfer_to_agent' for 'marketing_guide_workflow'.
     """,
     tools=[add_prompt_to_state],
     sub_agents=[marketing_guide_workflow]
