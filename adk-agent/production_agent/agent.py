@@ -43,30 +43,35 @@ mcp_tools = MCPToolset(connection_params=StreamableHTTPConnectionParams(url=mcp_
 def add_prompt_to_state(
     tool_context: ToolContext, prompt: str
 ) -> dict[str, str]:
-    """Saves the user's initial prompt to the state."""
+    """Saves the user's initial prompt to the state for the researcher to use."""
+    if not prompt:
+        return {"status": "error", "message": "No prompt provided."}
+    
+    # Store in tool_context.state so subsequent agents can access it
     tool_context.state["PROMPT"] = prompt
-    return {"status": "success"}
+    
+    return {
+        "status": "success", 
+        "message": f"Prompt '{prompt}' has been saved to state. You may now transfer to the workflow."
+    }
 
 comprehensive_researcher = Agent(
     name="comprehensive_researcher",
     model=model_name,
-    description="The primary researcher that can access data of Google Trends",
+    description="The primary researcher that can access Google Trends data.",
     instruction="""
-    You are a helpful research assistant. Your goal is to fully answer the user's PROMPT.
-    You have access to one tool:
-    1. A tool for getting data about latest google trends
-
-    First, analyze the user's PROMPT.
-    - Use that tool.
-    - Synthesize the results from the tool you use into preliminary data outputs.
-
-    PROMPT:
-    {{ PROMPT }}
+    You are a Research Assistant. Your mission is to answer the user's specific request.
+    
+    STRICT WORKFLOW:
+    1. Read the user's request from the variable: {{ PROMPT }}
+    2. Use the 'mcp_tools' to fetch relevant Google Trends data based on that prompt.
+    3. Summarize the data into a technical report.
+    
+    Important: If {{ PROMPT }} is empty, ask the user what they would like to research.
     """,
-    tools=[
-        mcp_tools,
-    ],
-    output_key="google_trends_data" # A key to store the combined findings
+    tools=[mcp_tools],
+    # This key is where the 'response_formatter' will look for data
+    output_key="google_trends_data" 
 )
 
 response_formatter = Agent(
